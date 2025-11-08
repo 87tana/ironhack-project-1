@@ -1,0 +1,26 @@
+---
+- name: Deploy voting app stack on frontend
+  hosts: frontend
+  become: yes
+
+  tasks:
+    - name: Create app directory on frontend
+      file:
+        path: /home/ubuntu/voting-app
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Copy docker-compose file to frontend
+      copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/voting-app/docker-compose.yml
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+
+    - name: Start containers with docker-compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/ubuntu/voting-app
