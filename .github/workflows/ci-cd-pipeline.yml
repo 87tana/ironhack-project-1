@@ -68,5 +68,4 @@ jobs:
 
       # 9) Apply Kubernetes manifests
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f k8s/
-
+        run: kubectl apply --recursive -f ./k8s
