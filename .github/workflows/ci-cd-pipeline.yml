@@ -1,0 +1,72 @@
+name: Voting App CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-2
+  EKS_CLUSTER_NAME: ironhack-main
+  DOCKER_REPO: tannaz87
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3) Build & push VOTE image
+      - name: Build vote image
+        run: docker build -t $DOCKER_REPO/vote:latest ./vote
+
+      - name: Push vote image
+        run: docker push $DOCKER_REPO/vote:latest
+
+      # 4) Build & push RESULT image
+      - name: Build result image
+        run: docker build -t $DOCKER_REPO/result:latest ./result
+
+      - name: Push result image
+        run: docker push $DOCKER_REPO/result:latest
+
+      # 5) Build & push WORKER image
+      - name: Build worker image
+        run: docker build -t $DOCKER_REPO/worker:latest ./worker
+
+      - name: Push worker image
+        run: docker push $DOCKER_REPO/worker:latest
+
+      # 6) Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 7) Install kubectl (if not already present)
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      # 8) Connect kubectl to your EKS cluster
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+
+      # 9) Apply Kubernetes manifests
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f k8s/
+
