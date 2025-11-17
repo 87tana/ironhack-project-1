@@ -69,3 +69,9 @@ jobs:
       # 9) Apply Kubernetes manifests
       - name: Apply Kubernetes manifests
         run: kubectl apply --recursive -f ./k8s
+      # 10) Restart deployments to pick up new images
+      - name: Restart deployments to pick up new images
+        run: |
+          kubectl rollout restart deployment/tannaz-deployment-vote   -n tannaz
+          kubectl rollout restart deployment/tannaz-deployment-result -n tannaz
+          kubectl rollout restart deployment/tannaz-deployment-worker -n tannaz
