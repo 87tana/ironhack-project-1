@@ -18,6 +18,7 @@ spec:
       containers:
         - name: worker
           image: tannaz87/worker:latest
+          imagePullPolicy: Always
           env:
             - name: REDIS_HOST
               value: "tannaz-service-redis"

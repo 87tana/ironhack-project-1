@@ -18,6 +18,7 @@ spec:
       containers:
         - name: result
           image: tannaz87/result:latest
+          imagePullPolicy: Always
           env:
             - name: POSTGRES_HOST
               value: "tannaz-service-postgres"

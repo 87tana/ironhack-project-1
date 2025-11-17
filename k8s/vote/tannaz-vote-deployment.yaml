@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: vote
-          image: tannaz87/vote:latest   # same image you used in Docker
+          image: tannaz87/vote:latest
+          imagePullPolicy: Always
           env:
             - name: REDIS_HOST
               value: "tannaz-service-redis"
