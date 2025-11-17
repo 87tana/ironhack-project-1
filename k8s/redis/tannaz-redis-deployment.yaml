@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tannaz-deployment-redis
+  namespace: tannaz
+  labels:
+    app: tannaz-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tannaz-redis
+  template:
+    metadata:
+      labels:
+        app: tannaz-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6-alpine
+          ports:
+            - containerPort: 6379

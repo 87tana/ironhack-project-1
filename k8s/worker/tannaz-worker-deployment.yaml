@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tannaz-deployment-worker
+  namespace: tannaz
+  labels:
+    app: tannaz-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tannaz-worker
+  template:
+    metadata:
+      labels:
+        app: tannaz-worker
+    spec:
+      containers:
+        - name: worker
+          image: tannaz87/worker:latest
+          env:
+            - name: REDIS_HOST
+              value: "tannaz-service-redis"
+            - name: POSTGRES_HOST
+              value: "tannaz-service-postgres"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "votes"

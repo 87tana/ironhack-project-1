@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tannaz-deployment-result
+  namespace: tannaz
+  labels:
+    app: tannaz-result
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tannaz-result
+  template:
+    metadata:
+      labels:
+        app: tannaz-result
+    spec:
+      containers:
+        - name: result
+          image: tannaz87/result:latest
+          env:
+            - name: POSTGRES_HOST
+              value: "tannaz-service-postgres"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
+          ports:
+            - containerPort: 80

@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tannaz-ingress-voting-app
+  namespace: tannaz
+  annotations:
+    kubernetes.io/ingress.class: nginx-tannaz
+
+    # keep connections open for websockets
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+
+    # tell NGINX which service uses websockets
+    nginx.ingress.kubernetes.io/websocket-services: "tannaz-service-result"
+spec:
+  rules:
+    - http:
+        paths:
+          # root → vote page
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tannaz-service-vote
+                port:
+                  number: 80
+
+          # /result → result page
+          - path: /result
+            pathType: Prefix
+            backend:
+              service:
+                name: tannaz-service-result
+                port:
+                  number: 80
+
+          # /socket.io → websocket traffic for result
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: tannaz-service-result
+                port:
+                  number: 80
+

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tannaz-service-result
+  namespace: tannaz
+  labels:
+    app: tannaz-result
+spec:
+  type: ClusterIP
+  selector:
+    app: tannaz-result
+  ports:
+    - port: 80         # Internal cluster port
+      targetPort: 80   # Port inside the result container

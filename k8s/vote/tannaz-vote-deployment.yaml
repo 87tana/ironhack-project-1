@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tannaz-deployment-vote
+  namespace: tannaz
+  labels:
+    app: tannaz-vote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tannaz-vote
+  template:
+    metadata:
+      labels:
+        app: tannaz-vote
+    spec:
+      containers:
+        - name: vote
+          image: tannaz87/vote:latest   # same image you used in Docker
+          env:
+            - name: REDIS_HOST
+              value: "tannaz-service-redis"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - containerPort: 80

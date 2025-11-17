@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tannaz-service-postgres
+  namespace: tannaz
+  labels:
+    app: tannaz-postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: tannaz-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
